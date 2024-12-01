@@ -5,7 +5,7 @@ import { mapStream } from "./stream-util.ts";
 const inputPath = new URL("./input.txt", import.meta.url);
 using file = await Deno.open(inputPath, { read: true });
 
-const lists = await Promise.all(
+const [listA, listB] = await Promise.all(
   file.readable
     .pipeThrough(new TextDecoderStream("utf-8"))
     .pipeThrough(new TextLineStream())
@@ -22,8 +22,16 @@ const lists = await Promise.all(
     ),
 );
 
-const totalDistance = zip(...lists)
-  .map(([elA, elB]) => Math.abs(elA - elB))
-  .reduce((acc, value) => acc + value);
+const sum = (a: number, b: number) => a + b;
 
-console.log(totalDistance);
+const totalDistance = zip(listA, listB)
+  .map(([elA, elB]) => Math.abs(elA - elB))
+  .reduce(sum, 0);
+
+const listBById = Map.groupBy(listB, (v) => v);
+
+const totalSimilarity = listA
+  .map((v) => v * (listBById.get(v)?.length ?? 0))
+  .reduce(sum, 0);
+
+console.log({ totalDistance, totalSimilarity });
