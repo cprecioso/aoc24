@@ -1,5 +1,6 @@
 import { zip } from "jsr:@std/collections@1.0.9";
 import { readLines } from "../_shared/util/files.ts";
+import { sum } from "../_shared/util/math.ts";
 import { mapStream } from "../_shared/util/streams.ts";
 
 using lines = await readLines(new URL("./input.txt", import.meta.url));
@@ -18,8 +19,6 @@ const [listA, listB] = await Promise.all(
       )).sort()
     ),
 );
-
-const sum = (a: number, b: number) => a + b;
 
 const totalDistance = zip(listA, listB)
   .map(([elA, elB]) => Math.abs(elA - elB))
